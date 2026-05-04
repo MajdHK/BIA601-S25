@@ -8,9 +8,7 @@ import uvicorn
 from database import db
 from recommender import run_recommender_ga
 
-# =========================
-# نماذج البيانات
-# =========================
+
 class OneProduct(BaseModel):
     product_id: int
     category: str
@@ -24,9 +22,7 @@ class ResponseBody(BaseModel):
     recommendations: List[OneProduct]
 
 
-# =========================
-# إعداد التطبيق
-# =========================
+
 app = FastAPI(title="BIA601 Integrated System")
 
 app.add_middleware(
@@ -37,24 +33,19 @@ app.add_middleware(
 )
 
 
-# =========================
-# الصفحة الرئيسية (Frontend)
-# =========================
+
 @app.get("/", response_class=HTMLResponse)
 def home():
     with open("index.html", "r", encoding="utf-8") as f:
         return f.read()
 
 
-# =========================
-# API: توصيات
-# =========================
+
 @app.get("/recommend", response_model=ResponseBody)
 def recommend(user_id: int):
 
     user = db.get_user(user_id)
 
-    # ✅ الإصلاح هنا
     if user is None or (hasattr(user, "empty") and user.empty):
         raise HTTPException(status_code=404, detail="User not found")
 
@@ -88,9 +79,7 @@ def recommend(user_id: int):
     )
 
 
-# =========================
-# API: المستخدمين
-# =========================
+
 @app.get("/users")
 def get_users():
     return {
@@ -99,8 +88,6 @@ def get_users():
     }
 
 
-# =========================
-# تشغيل محلي
-# =========================
+
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)
