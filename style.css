@@ -1,0 +1,129 @@
+/* Reset */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Body */
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #f0f4ff;
+    color: #222;
+    min-height: 100vh;
+}
+
+/* Navbar */
+.navbar {
+    background: #fff;
+    border-bottom: 2px solid #dde3ff;
+    padding: 14px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+}
+
+.navbar .logo {
+    font-weight: 700;
+    font-size: 18px;
+    color: #4361ee;
+}
+
+.navbar nav button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 7px 16px;
+    border-radius: 8px;
+}
+
+.navbar nav button:hover {
+    background: #eef0ff;
+}
+
+/* Layout */
+.container {
+    max-width: 1100px;
+    margin: auto;
+    padding: 40px 20px;
+}
+
+.page {
+    display: none;
+}
+
+.page.active {
+    display: block;
+}
+
+/* Home */
+.home-center {
+    max-width: 520px;
+    margin: 40px auto;
+    text-align: center;
+}
+
+.search-card {
+    background: #fff;
+    border: 1px solid #dde3ff;
+    border-radius: 18px;
+    padding: 30px;
+}
+
+/* Input */
+.search-card input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    margin-bottom: 14px;
+}
+
+/* Button */
+.btn-main {
+    width: 100%;
+    background: #4361ee;
+    color: #fff;
+    border: none;
+    padding: 13px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.btn-main:hover {
+    background: #3451d1;
+}
+
+/* Error */
+.error-msg {
+    color: red;
+    font-size: 13px;
+}
+
+/* Cards */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 20px;
+}
+
+.product-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 20px;
+}
+
+.product-card:hover {
+    transform: translateY(-4px);
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 20px;
+    color: #aaa;
+}
