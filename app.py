@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse   # ✅ أضف هذا
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 from typing import List
 import uvicorn
@@ -8,13 +8,25 @@ import uvicorn
 from database import db
 from recommender import run_recommender_ga
 
+# =========================
 # نماذج البيانات
+# =========================
 class OneProduct(BaseModel):
-    product_id: int; category: str; price: float; score: float; rating: float
+    product_id: int
+    category: str
+    price: float
+    score: float
+    rating: float
 
 class ResponseBody(BaseModel):
-    user_id: int; user_location: str; recommendations: List[OneProduct]
+    user_id: int
+    user_location: str
+    recommendations: List[OneProduct]
 
+
+# =========================
+# إعداد التطبيق
+# =========================
 app = FastAPI(title="BIA601 Integrated System")
 
 app.add_middleware(
@@ -24,22 +36,43 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
+
+# =========================
+# الصفحة الرئيسية (Frontend)
+# =========================
 @app.get("/", response_class=HTMLResponse)
 def home():
     with open("index.html", "r", encoding="utf-8") as f:
         return f.read()
 
 
+# =========================
+# API: توصيات
+# =========================
 @app.get("/recommend", response_model=ResponseBody)
 def recommend(user_id: int):
+
     user = db.get_user(user_id)
-    if not user:
+
+    # ✅ الإصلاح هنا
+    if user is None or (hasattr(user, "empty") and user.empty):
         raise HTTPException(status_code=404, detail="User not found")
-    
+
     results = run_recommender_ga(user_id)
+
+    if not results:
+        raise HTTPException(status_code=404, detail="No recommendations found")
+
     recs = []
+
     for pid, raw_sc in results:
-        p = db.products_df[db.products_df["product_id"] == pid].iloc[0]
+        prow = db.products_df[db.products_df["product_id"] == pid]
+
+        if prow.empty:
+            continue
+
+        p = prow.iloc[0]
+
         recs.append(OneProduct(
             product_id=int(pid),
             category=str(p["category"]),
@@ -55,12 +88,19 @@ def recommend(user_id: int):
     )
 
 
+# =========================
+# API: المستخدمين
+# =========================
 @app.get("/users")
 def get_users():
     return {
-        "users": db.users_df.head(20)[["user_id", "location", "age"]].to_dict(orient="records")
+        "users": db.users_df.head(20)[["user_id", "location", "age"]]
+        .to_dict(orient="records")
     }
 
 
+# =========================
+# تشغيل محلي
+# =========================
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)
